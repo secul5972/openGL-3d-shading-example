@@ -67,7 +67,6 @@ GLuint LoadShaders(ShaderInfo* shaders) {
 #ifdef _DEBUG
 			GLsizei len;
 			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
-
 			GLchar* log = (GLchar*)malloc((len + 1) * sizeof(GLchar));
 			glGetShaderInfoLog(shader, len, &len, log);
 			fprintf(stdout, "Shader compilation failed: %s\n", log);

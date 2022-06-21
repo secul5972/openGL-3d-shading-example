@@ -699,8 +699,6 @@ void draw_bistro_exterior(void) {
 
 // TO DO
 
-#define LOC_VERTEX 0
-#define LOC_NORMAL 1
 #define N_TIGER_FRAMES 12
 
 GLuint tiger_VBO, tiger_VAO;
@@ -773,7 +771,7 @@ void prepare_tiger(void) {
 	glBindVertexArray(tiger_VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, tiger_VBO);
-	glVertexAttribPointer(LOC_VERTEX, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
+	glVertexAttribPointer(INDEX_VERTEX_POSITION, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -824,7 +822,7 @@ void prepare_spider(void) {
 	glBindVertexArray(spider_VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, spider_VBO);
-	glVertexAttribPointer(LOC_VERTEX, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
+	glVertexAttribPointer(INDEX_VERTEX_POSITION, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -862,14 +860,11 @@ void prepare_bike(void) {
 	glBindVertexArray(bike_VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, bike_VBO);
-	glVertexAttribPointer(LOC_VERTEX, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
+	glVertexAttribPointer(INDEX_VERTEX_POSITION, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
 	glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(LOC_NORMAL, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(3 * sizeof(float)));
+	glVertexAttribPointer(INDEX_NORMAL, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-
-	/*glVertexAttribPointer(INDEX_TEX_COORD, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), BUFFER_OFFSET(6 * sizeof(float)));
-	glEnableVertexAttribArray(INDEX_TEX_COORD);*/
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -906,7 +901,7 @@ void prepare_bus(void) {
 	glBindVertexArray(bus_VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, bus_VBO);
-	glVertexAttribPointer(LOC_VERTEX, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
+	glVertexAttribPointer(INDEX_VERTEX_POSITION, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -944,7 +939,7 @@ void prepare_cow(void) {
 	glBindVertexArray(cow_VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, cow_VBO);
-	glVertexAttribPointer(LOC_VERTEX, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
+	glVertexAttribPointer(INDEX_VERTEX_POSITION, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -982,7 +977,7 @@ void prepare_ironman(void) {
 	glBindVertexArray(ironman_VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, ironman_VBO);
-	glVertexAttribPointer(LOC_VERTEX, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
+	glVertexAttribPointer(INDEX_VERTEX_POSITION, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -1020,13 +1015,11 @@ void prepare_tank(void) {
 	glBindVertexArray(tank_VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, tank_VBO);
-	glVertexAttribPointer(LOC_VERTEX, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
+	glVertexAttribPointer(INDEX_VERTEX_POSITION, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
 	glEnableVertexAttribArray(0);
 
-	//
-	glVertexAttribPointer(LOC_NORMAL, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(3 * sizeof(float)));
+	glVertexAttribPointer(INDEX_NORMAL, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-	//
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -1076,7 +1069,7 @@ void prepare_wolf(void) {
 	glBindVertexArray(wolf_VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, wolf_VBO);
-	glVertexAttribPointer(LOC_VERTEX, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
+	glVertexAttribPointer(INDEX_VERTEX_POSITION, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -1500,11 +1493,11 @@ void draw_bike(void) {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glUseProgram(h_ShaderProgram_PS);
 
-	glUniform3f(loc_material_PS.ambient_color, 0.0215f, 0.1745f, 0.0215f);
-	glUniform3f(loc_material_PS.diffuse_color, 0.07568f, 0.61424f, 0.07568f);
-	glUniform3f(loc_material_PS.specular_color, 0.633f, 0.727811f, 0.633f);
-	glUniform4f(loc_material_PS.emissive_color, 0.633f, 0.727811f, 0.633f, 1.0f);
-	glUniform1f(loc_material_PS.specular_exponent, 1.0f);
+	glUniform4f(loc_material_PS.ambient_color, 0.0215f, 0.1745f, 0.0215f, 1.0f);
+	glUniform4f(loc_material_PS.diffuse_color, 0.07568f, 0.61424f, 0.07568f, 1.0f);
+	glUniform4f(loc_material_PS.specular_color, 0.633f, 0.727811f, 0.633f, 1.0f);
+	glUniform4f(loc_material_PS.emissive_color, 0.633f, 0.727811f, 0.633f, 0.1f);
+	glUniform1f(loc_material_PS.specular_exponent, 76.8f);
 
 	ModelViewMatrix = glm::translate(ViewMatrix, glm::vec3(-2531.891846, 1773.687622, 20));
 	ModelViewMatrix = glm::scale(ModelViewMatrix, glm::vec3(100.0f, 100.0f, 100.0f));
@@ -1592,14 +1585,14 @@ void draw_ironman(void) {
 
 void draw_tank(void) {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glUseProgram(h_ShaderProgram_TXPS);
+	glUseProgram(h_ShaderProgram_GOU);
 
 	//material
-	glUniform3f(loc_material.ambient_color, 0.0215f, 0.1745f, 0.0215f);
-	glUniform3f(loc_material.diffuse_color, 0.07568f, 0.61424f, 0.07568f);
-	glUniform3f(loc_material.specular_color, 0.633f, 0.727811f, 0.633f);
-	glUniform4f(loc_material.emissive_color, 0.633f, 0.727811f, 0.633f, 1.0f);
-	glUniform1f(loc_material.specular_exponent, 10.0f);
+	glUniform4f(loc_material_GOU.ambient_color, 0.24725f, 0.1995f, 0.0745f, 1.0f);
+	glUniform4f(loc_material_GOU.diffuse_color, 0.75164f, 0.60648f, 0.22648f, 1.0f);
+	glUniform4f(loc_material_GOU.specular_color, 0.628281f, 0.555802f, 0.366065f, 1.0f);
+	glUniform4f(loc_material_GOU.emissive_color, 0.628281f, 0.555802f, 0.366065f, 1.0f);
+	glUniform1f(loc_material_GOU.specular_exponent, 51.2f);
 
 	ModelViewMatrix = glm::translate(ViewMatrix, glm::vec3(733.943237, 2301.803467, 710.973450));
 	ModelViewMatrix = glm::scale(ModelViewMatrix, glm::vec3(100.0f, 80.0f, 46.0f));
@@ -1607,9 +1600,9 @@ void draw_tank(void) {
 	ModelViewProjectionMatrix = ProjectionMatrix * ModelViewMatrix;
 	ModelViewMatrixInvTrans = glm::transpose(glm::inverse(glm::mat3(ModelViewMatrix)));
 
-	glUniformMatrix4fv(loc_ModelViewProjectionMatrix_TXPS, 1, GL_FALSE, &ModelViewProjectionMatrix[0][0]);
-	glUniformMatrix4fv(loc_ModelViewMatrix_TXPS, 1, GL_FALSE, &ModelViewMatrix[0][0]);
-	glUniformMatrix3fv(loc_ModelViewMatrixInvTrans_TXPS, 1, GL_FALSE, &ModelViewMatrixInvTrans[0][0]);
+	glUniformMatrix4fv(loc_ModelViewProjectionMatrix_GOU, 1, GL_FALSE, &ModelViewProjectionMatrix[0][0]);
+	glUniformMatrix4fv(loc_ModelViewMatrix_GOU, 1, GL_FALSE, &ModelViewMatrix[0][0]);
+	glUniformMatrix3fv(loc_ModelViewMatrixInvTrans_GOU, 1, GL_FALSE, &ModelViewMatrixInvTrans[0][0]);
 
 	glBindVertexArray(tank_VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 3 * tank_n_triangles);
@@ -1681,7 +1674,7 @@ void display(void) {
 	glutSwapBuffers();
 }
 
-#define CAM_TSPEED 10.0f
+#define CAM_TSPEED 30.0f
 
 //카메라 이동시 위치 설정
 void renew_cam_position(int dir) {

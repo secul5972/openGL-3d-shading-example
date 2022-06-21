@@ -34,7 +34,7 @@ layout (location = 0) in vec3 a_position;
 layout (location = 1) in vec3 a_normal;
 out vec4 v_shaded_color;
 
-vec4 lighting_equation_textured(in vec3 P_EC, in vec3 N_EC) {
+vec4 lighting_equation(in vec3 P_EC, in vec3 N_EC) {
 	vec4 color_sum;
 	float local_scale_factor, tmp_float; 
 	vec3 L_EC;
@@ -98,8 +98,8 @@ vec4 lighting_equation_textured(in vec3 P_EC, in vec3 N_EC) {
 }
 
 void main(void) {
-	v_position_EC = vec3(u_ModelViewMatrix*vec4(a_position, 1.0f));
-	v_normal_EC = normalize(u_ModelViewMatrixInvTrans*a_normal); 
+	vec3 v_position_EC = vec3(u_ModelViewMatrix*vec4(a_position, 1.0f));
+	vec3 v_normal_EC = normalize(u_ModelViewMatrixInvTrans*a_normal); 
 
 	v_shaded_color = lighting_equation(v_position_EC, v_normal_EC);
 	gl_Position = u_ModelViewProjectionMatrix*vec4(a_position, 1.0f);
