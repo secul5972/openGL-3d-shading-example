@@ -21,7 +21,7 @@
 extern SCENE scene;
 
 // for simple shaders
-GLuint h_ShaderProgram_simple, h_ShaderProgram_TXPS; // handle to shader program
+GLuint h_ShaderProgram_simple, h_ShaderProgram_TXPS, h_ShaderProgram_SPS; // handle to shader program
 GLint loc_ModelViewProjectionMatrix, loc_primitive_color; // indices of uniform variables
 
 // for Phong Shading (Textured) shaders
@@ -159,6 +159,12 @@ void prepare_shader_program(void) {
 	ShaderInfo shader_info_TXPS[3] = {
 	{ GL_VERTEX_SHADER, "Shaders/Phong_Tx.vert" },
 	{ GL_FRAGMENT_SHADER, "Shaders/Phong_Tx.frag" },
+	{ GL_NONE, NULL }
+	};
+
+	ShaderInfo shader_info_SPS[3] = {
+	{ GL_VERTEX_SHADER, "Simple_Phong.vert" },
+	{ GL_FRAGMENT_SHADER, "Simple_Phong.frag" },
 	{ GL_NONE, NULL }
 	};
 
@@ -569,6 +575,7 @@ void draw_bistro_exterior(void) {
 // TO DO
 
 #define LOC_VERTEX 0
+#define LOC_NORMAL 1
 #define N_TIGER_FRAMES 12
 
 GLuint tiger_VBO, tiger_VAO;
@@ -642,8 +649,8 @@ void prepare_tiger(void) {
 
 	glBindBuffer(GL_ARRAY_BUFFER, tiger_VBO);
 	glVertexAttribPointer(LOC_VERTEX, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
-
 	glEnableVertexAttribArray(0);
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
@@ -884,6 +891,11 @@ void prepare_tank(void) {
 	glBindBuffer(GL_ARRAY_BUFFER, tank_VBO);
 	glVertexAttribPointer(LOC_VERTEX, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(0));
 	glEnableVertexAttribArray(0);
+
+	//
+	glVertexAttribPointer(LOC_NORMAL, 3, GL_FLOAT, GL_FALSE, n_bytes_per_vertex, BUFFER_OFFSET(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	//
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -1437,20 +1449,35 @@ void draw_ironman(void) {
 
 
 void draw_tank(void) {
-	glUseProgram(h_ShaderProgram_simple);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glUseProgram(h_ShaderProgram_TXPS);
+
+	//material
+	glUniform3f(loc_material.ambient_color, 0.0215f, 0.1745f, 0.0215f);
+	glUniform3f(loc_material.diffuse_color, 0.07568f, 0.61424f, 0.07568f);
+	glUniform3f(loc_material.specular_color, 0.633f, 0.727811f, 0.633f);
+	glUniform4f(loc_material.emissive_color, 0.633f, 0.727811f, 0.633f, 1.0f);
+	glUniform1f(loc_material.specular_exponent, 10.0f);
 
 	ModelViewMatrix = glm::translate(ViewMatrix, glm::vec3(733.943237, 2301.803467, 710.973450));
 	ModelViewMatrix = glm::scale(ModelViewMatrix, glm::vec3(100.0f, 80.0f, 46.0f));
 	ModelViewMatrix = glm::rotate(ModelViewMatrix, 56 * TO_RADIAN, glm::vec3(1.0f, 1.0f, 0.0f));
 	ModelViewProjectionMatrix = ProjectionMatrix * ModelViewMatrix;
+	ModelViewMatrixInvTrans = glm::transpose(glm::inverse(glm::mat3(ModelViewMatrix)));
 
-	glUniformMatrix4fv(loc_ModelViewProjectionMatrix, 1, GL_FALSE, &ModelViewProjectionMatrix[0][0]);
-	glUniform3f(loc_primitive_color, 1.0f, 0.0f, 1.0f);
+	glUniformMatrix4fv(loc_ModelViewProjectionMatrix_TXPS, 1, GL_FALSE, &ModelViewProjectionMatrix[0][0]);
+	glUniformMatrix4fv(loc_ModelViewMatrix_TXPS, 1, GL_FALSE, &ModelViewMatrix[0][0]);
+	glUniformMatrix3fv(loc_ModelViewMatrixInvTrans_TXPS, 1, GL_FALSE, &ModelViewMatrixInvTrans[0][0]);
 
+	//glUniformMatrix4fv(loc_ModelViewProjectionMatrix, 1, GL_FALSE, &ModelViewProjectionMatrix[0][0]);
+	//glUniform3f(loc_primitive_color, 1.0f, 0.0f, 1.0f);
 
 	glBindVertexArray(tank_VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 3 * tank_n_triangles);
 	glBindVertexArray(0);
+
+	glUseProgram(0);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 int cur_frame_wolf;

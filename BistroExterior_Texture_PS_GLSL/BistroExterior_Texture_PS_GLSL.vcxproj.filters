@@ -54,5 +54,11 @@
     <None Include="Shaders\simple.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\Simple_Phong.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Simple_Phong.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
