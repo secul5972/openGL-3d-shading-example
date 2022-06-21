@@ -28,7 +28,7 @@ void read_3D_scene_from_file(SCENE* pScene) {
 		GEOMETRY_TRIANGULAR_MESH* pMesh = &(pMaterial->geometry.tm);
 		pMesh->triangle_list = (TRIANGLE*)malloc(sizeof(TRIANGLE) * pMesh->n_triangle);
 		fread(pMesh->triangle_list, sizeof(TRIANGLE), pMesh->n_triangle, fp);
-
+		 
 		for (int triIdx = 0; triIdx < pMesh->n_triangle; triIdx++)
 		{
 			TRIANGLE* triObj = &(pMesh->triangle_list[triIdx]);

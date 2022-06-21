@@ -54,10 +54,16 @@
     <None Include="Shaders\simple.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\Simple_Phong.frag">
+    <None Include="Shaders\Gouraud.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\Simple_Phong.vert">
+    <None Include="Shaders\Gouraud.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Phong.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Phong.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
