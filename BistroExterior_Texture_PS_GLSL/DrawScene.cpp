@@ -29,6 +29,7 @@ GLint loc_ModelViewProjectionMatrix, loc_primitive_color; // indices of uniform 
 GLint loc_global_ambient_color, loc_global_ambient_color_GOU, loc_global_ambient_color_PS;
 loc_light_Parameters loc_light[NUMBER_OF_LIGHT_SUPPORTED], loc_light_GOU[NUMBER_OF_LIGHT_SUPPORTED], loc_light_PS[NUMBER_OF_LIGHT_SUPPORTED];
 loc_light_Parameters wc_tog_light[NUMBER_OF_LIGHT_SUPPORTED], wc_tog_light_GOU[NUMBER_OF_LIGHT_SUPPORTED], wc_tog_light_PS[NUMBER_OF_LIGHT_SUPPORTED];
+loc_light_Parameters ec_tog_light[NUMBER_OF_LIGHT_SUPPORTED], ec_tog_light_GOU[NUMBER_OF_LIGHT_SUPPORTED], ec_tog_light_PS[NUMBER_OF_LIGHT_SUPPORTED];
 loc_Material_Parameters loc_material, loc_material_GOU, loc_material_PS;
 GLint loc_ModelViewProjectionMatrix_TXPS, loc_ModelViewMatrix_TXPS, loc_ModelViewMatrixInvTrans_TXPS;
 GLint loc_ModelViewProjectionMatrix_GOU, loc_ModelViewMatrix_GOU, loc_ModelViewMatrixInvTrans_GOU;
@@ -37,6 +38,7 @@ GLint loc_texture;
 GLint loc_flag_texture_mapping;
 GLint loc_flag_fog;
 GLint wc_tog_light_flag, wc_tog_light_flag_GOU, wc_tog_light_flag_PS;
+GLint ec_tog_light_flag, ec_tog_light_flag_GOU, ec_tog_light_flag_PS;
 
 float tog_light_pos[4][4] = {
 	{ -515.988586f, 106.687012f, 287.154633f, 1.0f},
@@ -222,23 +224,23 @@ void prepare_shader_program(void) {
 	}
 
 	for (int i = 0; i < NUMBER_OF_LIGHT_SUPPORTED; i++) {
-		sprintf(string, "u_tog_light[%d].light_on", i);
+		sprintf(string, "u_wc_tog_light[%d].light_on", i);
 		wc_tog_light[i].light_on = glGetUniformLocation(h_ShaderProgram_TXPS, string);
-		sprintf(string, "u_tog_light[%d].position", i);
+		sprintf(string, "u_wc_tog_light[%d].position", i);
 		wc_tog_light[i].position = glGetUniformLocation(h_ShaderProgram_TXPS, string);
-		sprintf(string, "u_tog_light[%d].ambient_color", i);
+		sprintf(string, "u_wc_tog_light[%d].ambient_color", i);
 		wc_tog_light[i].ambient_color = glGetUniformLocation(h_ShaderProgram_TXPS, string);
-		sprintf(string, "u_tog_light[%d].diffuse_color", i);
+		sprintf(string, "u_wc_tog_light[%d].diffuse_color", i);
 		wc_tog_light[i].diffuse_color = glGetUniformLocation(h_ShaderProgram_TXPS, string);
-		sprintf(string, "u_tog_light[%d].specular_color", i);
+		sprintf(string, "u_wc_tog_light[%d].specular_color", i);
 		wc_tog_light[i].specular_color = glGetUniformLocation(h_ShaderProgram_TXPS, string);
-		sprintf(string, "u_tog_light[%d].spot_direction", i);
+		sprintf(string, "u_wc_tog_light[%d].spot_direction", i);
 		wc_tog_light[i].spot_direction = glGetUniformLocation(h_ShaderProgram_TXPS, string);
-		sprintf(string, "u_tog_light[%d].spot_exponent", i);
+		sprintf(string, "u_wc_tog_light[%d].spot_exponent", i);
 		wc_tog_light[i].spot_exponent = glGetUniformLocation(h_ShaderProgram_TXPS, string);
-		sprintf(string, "u_tog_light[%d].spot_cutoff_angle", i);
+		sprintf(string, "u_wc_tog_light[%d].spot_cutoff_angle", i);
 		wc_tog_light[i].spot_cutoff_angle = glGetUniformLocation(h_ShaderProgram_TXPS, string);
-		sprintf(string, "u_tog_light[%d].light_attenuation_factors", i);
+		sprintf(string, "u_wc_tog_light[%d].light_attenuation_factors", i);
 		wc_tog_light[i].light_attenuation_factors = glGetUniformLocation(h_ShaderProgram_TXPS, string);
 	}
 
@@ -283,23 +285,23 @@ void prepare_shader_program(void) {
 	}
 
 	for (int i = 0; i < NUMBER_OF_LIGHT_SUPPORTED; i++) {
-		sprintf(string, "u_tog_light[%d].light_on", i);
+		sprintf(string, "u_wc_tog_light[%d].light_on", i);
 		wc_tog_light_GOU[i].light_on = glGetUniformLocation(h_ShaderProgram_GOU, string);
-		sprintf(string, "u_tog_light[%d].position", i);
+		sprintf(string, "u_wc_tog_light[%d].position", i);
 		wc_tog_light_GOU[i].position = glGetUniformLocation(h_ShaderProgram_GOU, string);
-		sprintf(string, "u_tog_light[%d].ambient_color", i);
+		sprintf(string, "u_wc_tog_light[%d].ambient_color", i);
 		wc_tog_light_GOU[i].ambient_color = glGetUniformLocation(h_ShaderProgram_GOU, string);
-		sprintf(string, "u_tog_light[%d].diffuse_color", i);
+		sprintf(string, "u_wc_tog_light[%d].diffuse_color", i);
 		wc_tog_light_GOU[i].diffuse_color = glGetUniformLocation(h_ShaderProgram_GOU, string);
-		sprintf(string, "u_tog_light[%d].specular_color", i);
+		sprintf(string, "u_wc_tog_light[%d].specular_color", i);
 		wc_tog_light_GOU[i].specular_color = glGetUniformLocation(h_ShaderProgram_GOU, string);
-		sprintf(string, "u_tog_light[%d].spot_direction", i);
+		sprintf(string, "u_wc_tog_light[%d].spot_direction", i);
 		wc_tog_light_GOU[i].spot_direction = glGetUniformLocation(h_ShaderProgram_GOU, string);
-		sprintf(string, "u_tog_light[%d].spot_exponent", i);
+		sprintf(string, "u_wc_tog_light[%d].spot_exponent", i);
 		wc_tog_light_GOU[i].spot_exponent = glGetUniformLocation(h_ShaderProgram_GOU, string);
-		sprintf(string, "u_tog_light[%d].spot_cutoff_angle", i);
+		sprintf(string, "u_wc_tog_light[%d].spot_cutoff_angle", i);
 		wc_tog_light_GOU[i].spot_cutoff_angle = glGetUniformLocation(h_ShaderProgram_GOU, string);
-		sprintf(string, "u_tog_light[%d].light_attenuation_factors", i);
+		sprintf(string, "u_wc_tog_light[%d].light_attenuation_factors", i);
 		wc_tog_light_GOU[i].light_attenuation_factors = glGetUniformLocation(h_ShaderProgram_GOU, string);
 	}
 
@@ -341,23 +343,23 @@ void prepare_shader_program(void) {
 	}
 
 	for (int i = 0; i < NUMBER_OF_LIGHT_SUPPORTED; i++) {
-		sprintf(string, "u_tog_light[%d].light_on", i);
+		sprintf(string, "u_wc_tog_light[%d].light_on", i);
 		wc_tog_light_PS[i].light_on = glGetUniformLocation(h_ShaderProgram_PS, string);
-		sprintf(string, "u_tog_light[%d].position", i);
+		sprintf(string, "u_wc_tog_light[%d].position", i);
 		wc_tog_light_PS[i].position = glGetUniformLocation(h_ShaderProgram_PS, string);
-		sprintf(string, "u_tog_light[%d].ambient_color", i);
+		sprintf(string, "u_wc_tog_light[%d].ambient_color", i);
 		wc_tog_light_PS[i].ambient_color = glGetUniformLocation(h_ShaderProgram_PS, string);
-		sprintf(string, "u_tog_light[%d].diffuse_color", i);
+		sprintf(string, "u_wc_tog_light[%d].diffuse_color", i);
 		wc_tog_light_PS[i].diffuse_color = glGetUniformLocation(h_ShaderProgram_PS, string);
-		sprintf(string, "u_tog_light[%d].specular_color", i);
+		sprintf(string, "u_wc_tog_light[%d].specular_color", i);
 		wc_tog_light_PS[i].specular_color = glGetUniformLocation(h_ShaderProgram_PS, string);
-		sprintf(string, "u_tog_light[%d].spot_direction", i);
+		sprintf(string, "u_wc_tog_light[%d].spot_direction", i);
 		wc_tog_light_PS[i].spot_direction = glGetUniformLocation(h_ShaderProgram_PS, string);
-		sprintf(string, "u_tog_light[%d].spot_exponent", i);
+		sprintf(string, "u_wc_tog_light[%d].spot_exponent", i);
 		wc_tog_light_PS[i].spot_exponent = glGetUniformLocation(h_ShaderProgram_PS, string);
-		sprintf(string, "u_tog_light[%d].spot_cutoff_angle", i);
+		sprintf(string, "u_wc_tog_light[%d].spot_cutoff_angle", i);
 		wc_tog_light_PS[i].spot_cutoff_angle = glGetUniformLocation(h_ShaderProgram_PS, string);
-		sprintf(string, "u_tog_light[%d].light_attenuation_factors", i);
+		sprintf(string, "u_wc_tog_light[%d].light_attenuation_factors", i);
 		wc_tog_light_PS[i].light_attenuation_factors = glGetUniformLocation(h_ShaderProgram_PS, string);
 	}
 
