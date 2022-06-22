@@ -39,10 +39,10 @@ GLint loc_flag_fog;
 GLint wc_tog_light_flag, wc_tog_light_flag_GOU, wc_tog_light_flag_PS;
 
 float tog_light_pos[4][4] = {
-	(-515.988586f, 106.687012f, 287.154633f, 1.0f),
-	(-234.229050f, 1230.761597f, 459.098297f, 1.0f),
-	(633.265564f, -658.600098f, 310.043335f, 1.0f),
-	(-1844.797852f, 1044.170044f, 293.936890f, 1.0f)
+	{ -515.988586f, 106.687012f, 287.154633f, 1.0f},
+	{-234.229050f, 1230.761597f, 459.098297f, 1.0f},
+	{633.265564f, -658.600098f, 310.043335f, 1.0f},
+	{-1844.797852f, 1044.170044f, 293.936890f, 1.0f}
 };
 
 int wc_tog_flag;
@@ -88,34 +88,12 @@ using glm::mat4;
 
 //ViewMatrix 설정
 void set_ViewMatrix_from_camera_frame(void) {
-	glm::vec4 tmp_pos[4];
-
 	ViewMatrix = glm::mat4(current_camera.uaxis[0], current_camera.vaxis[0], current_camera.naxis[0], 0.0f,
 		current_camera.uaxis[1], current_camera.vaxis[1], current_camera.naxis[1], 0.0f,
 		current_camera.uaxis[2], current_camera.vaxis[2], current_camera.naxis[2], 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 
 	ViewMatrix = glm::translate(ViewMatrix, glm::vec3(-current_camera.pos[0], -current_camera.pos[1], -current_camera.pos[2]));
-
-	tmp_pos[0] = ViewMatrix * glm::vec4(tog_light_pos[0][0], tog_light_pos[0][1], tog_light_pos[0][2], tog_light_pos[0][3]);
-	tmp_pos[1] = ViewMatrix * glm::vec4(tog_light_pos[1][0], tog_light_pos[1][1], tog_light_pos[1][2], tog_light_pos[1][3]);
-	tmp_pos[2] = ViewMatrix * glm::vec4(tog_light_pos[2][0], tog_light_pos[2][1], tog_light_pos[2][2], tog_light_pos[2][3]);
-	tmp_pos[3] = ViewMatrix * glm::vec4(tog_light_pos[3][0], tog_light_pos[3][1], tog_light_pos[3][2], tog_light_pos[3][3]);
-
-	glUseProgram(h_ShaderProgram_TXPS);
-	for (int i = 0; i < NUMBER_OF_LIGHT_SUPPORTED; i++)
-		glUniform4f(tog_light[i].position, tmp_pos[i].x, tmp_pos[i].y, tmp_pos[i].z, tmp_pos[i].w);
-	glUseProgram(0);
-
-	glUseProgram(h_ShaderProgram_GOU);
-	for (int i = 0; i < NUMBER_OF_LIGHT_SUPPORTED; i++)
-		glUniform4f(tog_light_GOU[i].position, tmp_pos[i].x, tmp_pos[i].y, tmp_pos[i].z, tmp_pos[i].w);
-	glUseProgram(0);
-
-	glUseProgram(h_ShaderProgram_PS);
-	for (int i = 0; i < NUMBER_OF_LIGHT_SUPPORTED; i++)
-		glUniform4f(tog_light_PS[i].position, tmp_pos[i].x, tmp_pos[i].y, tmp_pos[i].z, tmp_pos[i].w);
-	glUseProgram(0);
 }
 
 void set_current_camera(int camera_num) {
@@ -694,6 +672,31 @@ void initialize_lights(void) { // follow OpenGL conventions for initialization
 		glUniform4f(tog_light_PS[i].light_attenuation_factors, 1.0f, 0.0f, 0.0f, 0.0f); // .w != 0.0f for no ligth attenuation
 	}
 
+	glUseProgram(0);
+}
+
+void reset_light(void)
+{
+	glm::vec4 tmp_pos[4];
+
+	tmp_pos[0] = ViewProjectionMatrix * glm::vec4(tog_light_pos[0][0], tog_light_pos[0][1], tog_light_pos[0][2], tog_light_pos[0][3]);
+	tmp_pos[1] = ViewProjectionMatrix * glm::vec4(tog_light_pos[1][0], tog_light_pos[1][1], tog_light_pos[1][2], tog_light_pos[1][3]);
+	tmp_pos[2] = ViewProjectionMatrix * glm::vec4(tog_light_pos[2][0], tog_light_pos[2][1], tog_light_pos[2][2], tog_light_pos[2][3]);
+	tmp_pos[3] = ViewProjectionMatrix * glm::vec4(tog_light_pos[3][0], tog_light_pos[3][1], tog_light_pos[3][2], tog_light_pos[3][3]);
+
+	glUseProgram(h_ShaderProgram_TXPS);
+	for (int i = 0; i < NUMBER_OF_LIGHT_SUPPORTED; i++)
+		glUniform4f(tog_light[i].position, tmp_pos[i].x, tmp_pos[i].y, tmp_pos[i].z, tmp_pos[i].w);
+	glUseProgram(0);
+
+	glUseProgram(h_ShaderProgram_GOU);
+	for (int i = 0; i < NUMBER_OF_LIGHT_SUPPORTED; i++)
+		glUniform4f(tog_light_GOU[i].position, tmp_pos[i].x, tmp_pos[i].y, tmp_pos[i].z, tmp_pos[i].w);
+	glUseProgram(0);
+
+	glUseProgram(h_ShaderProgram_PS);
+	for (int i = 0; i < NUMBER_OF_LIGHT_SUPPORTED; i++)
+		glUniform4f(tog_light_PS[i].position, tmp_pos[i].x, tmp_pos[i].y, tmp_pos[i].z, tmp_pos[i].w);
 	glUseProgram(0);
 }
 
@@ -1867,7 +1870,7 @@ void draw_my_objects_20161611()
 /********************  START: callback function definitions *********************/
 void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	reset_light();
 	draw_my_objects_20161611();
 	draw_grid();
 	draw_axes();
