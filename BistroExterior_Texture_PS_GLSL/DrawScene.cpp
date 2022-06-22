@@ -30,6 +30,7 @@ GLint loc_global_ambient_color, loc_global_ambient_color_GOU, loc_global_ambient
 loc_light_Parameters loc_light[NUMBER_OF_LIGHT_SUPPORTED], loc_light_GOU[NUMBER_OF_LIGHT_SUPPORTED], loc_light_PS[NUMBER_OF_LIGHT_SUPPORTED];
 loc_light_Parameters wc_tog_light[NUMBER_OF_LIGHT_SUPPORTED], wc_tog_light_GOU[NUMBER_OF_LIGHT_SUPPORTED], wc_tog_light_PS[NUMBER_OF_LIGHT_SUPPORTED];
 loc_light_Parameters ec_tog_light, ec_tog_light_GOU, ec_tog_light_PS;
+loc_light_Parameters mc_tog_light, mc_tog_light_GOU, mc_tog_light_PS;
 loc_Material_Parameters loc_material, loc_material_GOU, loc_material_PS;
 GLint loc_ModelViewProjectionMatrix_TXPS, loc_ModelViewMatrix_TXPS, loc_ModelViewMatrixInvTrans_TXPS;
 GLint loc_ModelViewProjectionMatrix_GOU, loc_ModelViewMatrix_GOU, loc_ModelViewMatrixInvTrans_GOU;
@@ -39,6 +40,7 @@ GLint loc_flag_texture_mapping;
 GLint loc_flag_fog;
 GLint wc_tog_light_flag, wc_tog_light_flag_GOU, wc_tog_light_flag_PS;
 GLint ec_tog_light_flag, ec_tog_light_flag_GOU, ec_tog_light_flag_PS;
+GLint mc_tog_light_flag, mc_tog_light_flag_GOU, mc_tog_light_flag_PS;
 
 float tog_light_pos[4][4] = {
 	{ -515.988586f, 106.687012f, 287.154633f, 1.0f},
@@ -49,6 +51,7 @@ float tog_light_pos[4][4] = {
 
 int wc_tog_flag;
 int ec_tog_flag;
+int mc_tog_flag;
 
 // include glm/*.hpp only if necessary
 // #include <glm/glm.hpp> 
@@ -255,6 +258,16 @@ void prepare_shader_program(void) {
 	ec_tog_light.spot_cutoff_angle = glGetUniformLocation(h_ShaderProgram_TXPS, "u_ec_tog_light.spot_cutoff_angle");
 	ec_tog_light.light_attenuation_factors = glGetUniformLocation(h_ShaderProgram_TXPS, "u_ec_tog_light.light_attenuation_factors");
 
+	mc_tog_light.light_on = glGetUniformLocation(h_ShaderProgram_TXPS, "u_mc_tog_light.light_on");
+	mc_tog_light.position = glGetUniformLocation(h_ShaderProgram_TXPS, "u_mc_tog_light.position");
+	mc_tog_light.ambient_color = glGetUniformLocation(h_ShaderProgram_TXPS, "u_mc_tog_light.ambient_color");
+	mc_tog_light.diffuse_color = glGetUniformLocation(h_ShaderProgram_TXPS, "u_mc_tog_light.diffuse_color");
+	mc_tog_light.specular_color = glGetUniformLocation(h_ShaderProgram_TXPS, "u_mc_tog_light.spmcular_color");
+	mc_tog_light.spot_direction = glGetUniformLocation(h_ShaderProgram_TXPS, "u_mc_tog_light.spot_dirmction");
+	mc_tog_light.spot_exponent = glGetUniformLocation(h_ShaderProgram_TXPS, "u_mc_tog_light.spot_exponent");
+	mc_tog_light.spot_cutoff_angle = glGetUniformLocation(h_ShaderProgram_TXPS, "u_mc_tog_light.spot_cutoff_angle");
+	mc_tog_light.light_attenuation_factors = glGetUniformLocation(h_ShaderProgram_TXPS, "u_mc_tog_light.light_attenuation_factors");
+
 	loc_material.ambient_color = glGetUniformLocation(h_ShaderProgram_TXPS, "u_material.ambient_color");
 	loc_material.diffuse_color = glGetUniformLocation(h_ShaderProgram_TXPS, "u_material.diffuse_color");
 	loc_material.specular_color = glGetUniformLocation(h_ShaderProgram_TXPS, "u_material.specular_color");
@@ -267,6 +280,7 @@ void prepare_shader_program(void) {
 
 	wc_tog_light_flag = glGetUniformLocation(h_ShaderProgram_TXPS, "u_wc_tog_light_flag");
 	ec_tog_light_flag = glGetUniformLocation(h_ShaderProgram_TXPS, "u_ec_tog_light_flag");
+	mc_tog_light_flag = glGetUniformLocation(h_ShaderProgram_TXPS, "u_mc_tog_light_flag");
 
 	h_ShaderProgram_GOU = LoadShaders(shader_info_GOU);
 	loc_ModelViewProjectionMatrix_GOU = glGetUniformLocation(h_ShaderProgram_GOU, "u_ModelViewProjectionMatrix");
@@ -327,14 +341,26 @@ void prepare_shader_program(void) {
 	ec_tog_light_GOU.spot_cutoff_angle = glGetUniformLocation(h_ShaderProgram_GOU, "u_ec_tog_light.spot_cutoff_angle");
 	ec_tog_light_GOU.light_attenuation_factors = glGetUniformLocation(h_ShaderProgram_GOU, "u_ec_tog_light.light_attenuation_factors");
 
+	mc_tog_light_GOU.light_on = glGetUniformLocation(h_ShaderProgram_GOU, "u_mc_tog_light.light_on");
+	mc_tog_light_GOU.position = glGetUniformLocation(h_ShaderProgram_GOU, "u_mc_tog_light.position");
+	mc_tog_light_GOU.ambient_color = glGetUniformLocation(h_ShaderProgram_GOU, "u_mc_tog_light.ambient_color");
+	mc_tog_light_GOU.diffuse_color = glGetUniformLocation(h_ShaderProgram_GOU, "u_mc_tog_light.diffuse_color");
+	mc_tog_light_GOU.specular_color = glGetUniformLocation(h_ShaderProgram_GOU, "u_mc_tog_light.spmcular_color");
+	mc_tog_light_GOU.spot_direction = glGetUniformLocation(h_ShaderProgram_GOU, "u_mc_tog_light.spot_dirmction");
+	mc_tog_light_GOU.spot_exponent = glGetUniformLocation(h_ShaderProgram_GOU, "u_mc_tog_light.spot_exponent");
+	mc_tog_light_GOU.spot_cutoff_angle = glGetUniformLocation(h_ShaderProgram_GOU, "u_mc_tog_light.spot_cutoff_angle");
+	mc_tog_light_GOU.light_attenuation_factors = glGetUniformLocation(h_ShaderProgram_GOU, "u_mc_tog_light.light_attenuation_factors");
+
+
 	loc_material_GOU.ambient_color = glGetUniformLocation(h_ShaderProgram_GOU, "u_material.ambient_color");
 	loc_material_GOU.diffuse_color = glGetUniformLocation(h_ShaderProgram_GOU, "u_material.diffuse_color");
 	loc_material_GOU.specular_color = glGetUniformLocation(h_ShaderProgram_GOU, "u_material.specular_color");
 	loc_material_GOU.emissive_color = glGetUniformLocation(h_ShaderProgram_GOU, "u_material.emissive_color");
 	loc_material_GOU.specular_exponent = glGetUniformLocation(h_ShaderProgram_GOU, "u_material.specular_exponent");
 
-	wc_tog_light_flag_GOU = glGetUniformLocation(h_ShaderProgram_TXPS, "u_wc_tog_light_flag");
-	ec_tog_light_flag_GOU = glGetUniformLocation(h_ShaderProgram_TXPS, "u_ec_tog_light_flag");
+	wc_tog_light_flag_GOU = glGetUniformLocation(h_ShaderProgram_GOU, "u_wc_tog_light_flag");
+	ec_tog_light_flag_GOU = glGetUniformLocation(h_ShaderProgram_GOU, "u_ec_tog_light_flag");
+	mc_tog_light_flag_GOU = glGetUniformLocation(h_ShaderProgram_GOU, "u_mc_tog_light_flag");
 
 	//////////////////////////
 	h_ShaderProgram_PS = LoadShaders(shader_info_PS);
@@ -396,14 +422,25 @@ void prepare_shader_program(void) {
 	ec_tog_light_PS.spot_cutoff_angle = glGetUniformLocation(h_ShaderProgram_PS, "u_ec_tog_light.spot_cutoff_angle");
 	ec_tog_light_PS.light_attenuation_factors = glGetUniformLocation(h_ShaderProgram_PS, "u_ec_tog_light.light_attenuation_factors");
 
+	mc_tog_light_PS.light_on = glGetUniformLocation(h_ShaderProgram_PS, "u_mc_tog_light.light_on");
+	mc_tog_light_PS.position = glGetUniformLocation(h_ShaderProgram_PS, "u_mc_tog_light.position");
+	mc_tog_light_PS.ambient_color = glGetUniformLocation(h_ShaderProgram_PS, "u_mc_tog_light.ambient_color");
+	mc_tog_light_PS.diffuse_color = glGetUniformLocation(h_ShaderProgram_PS, "u_mc_tog_light.diffuse_color");
+	mc_tog_light_PS.specular_color = glGetUniformLocation(h_ShaderProgram_PS, "u_mc_tog_light.spmcular_color");
+	mc_tog_light_PS.spot_direction = glGetUniformLocation(h_ShaderProgram_PS, "u_mc_tog_light.spot_dirmction");
+	mc_tog_light_PS.spot_exponent = glGetUniformLocation(h_ShaderProgram_PS, "u_mc_tog_light.spot_exponent");
+	mc_tog_light_PS.spot_cutoff_angle = glGetUniformLocation(h_ShaderProgram_PS, "u_mc_tog_light.spot_cutoff_angle");
+	mc_tog_light_PS.light_attenuation_factors = glGetUniformLocation(h_ShaderProgram_PS, "u_mc_tog_light.light_attenuation_factors");
+
 	loc_material_PS.ambient_color = glGetUniformLocation(h_ShaderProgram_PS, "u_material.ambient_color");
 	loc_material_PS.diffuse_color = glGetUniformLocation(h_ShaderProgram_PS, "u_material.diffuse_color");
 	loc_material_PS.specular_color = glGetUniformLocation(h_ShaderProgram_PS, "u_material.specular_color");
 	loc_material_PS.emissive_color = glGetUniformLocation(h_ShaderProgram_PS, "u_material.emissive_color");
 	loc_material_PS.specular_exponent = glGetUniformLocation(h_ShaderProgram_PS, "u_material.specular_exponent");
 
-	wc_tog_light_flag_PS = glGetUniformLocation(h_ShaderProgram_TXPS, "u_wc_tog_light_flag");
-	ec_tog_light_flag_PS = glGetUniformLocation(h_ShaderProgram_TXPS, "u_ec_tog_light_flag");
+	wc_tog_light_flag_PS = glGetUniformLocation(h_ShaderProgram_PS, "u_wc_tog_light_flag");
+	ec_tog_light_flag_PS = glGetUniformLocation(h_ShaderProgram_PS, "u_ec_tog_light_flag");
+	mc_tog_light_flag_PS = glGetUniformLocation(h_ShaderProgram_PS, "u_mc_tog_light_flag");
 }
 /*******************************  END: shder setup ******************************/
 
@@ -611,6 +648,15 @@ void initialize_lights(void) { // follow OpenGL conventions for initialization
 	glUniform1f(ec_tog_light.spot_cutoff_angle, 30.0f); // [0.0, 90.0] or 180.0 (180.0 for no spot light effect)
 	glUniform4f(ec_tog_light.light_attenuation_factors, 1.0f, 0.0f, 0.0f, 0.0f); // .w != 0.0f for no ligth attenuation
 
+	glUniform1i(mc_tog_light.light_on, 1);
+	glUniform4f(mc_tog_light.ambient_color, 0.19125f, 0.0735f, 0.0225f, 1.0f);
+	glUniform4f(mc_tog_light.diffuse_color, 0.19125f, 0.0735f, 0.0225f, 1.0f);
+	glUniform4f(mc_tog_light.specular_color, 0.7038f, 0.27048f, 0.0828f, 1.0f);
+	glUniform3f(mc_tog_light.spot_direction, 0.0f, 0.0f, -1.0f);
+	glUniform1f(mc_tog_light.spot_exponent, 0.0f); // [0.0, 128.0]
+	glUniform1f(mc_tog_light.spot_cutoff_angle, 180.0f); // [0.0, 90.0] or 180.0 (180.0 for no spot light effmct)
+	glUniform4f(mc_tog_light.light_attenuation_factors, 0.0f, 0.0005f, 0.0f, 1.0f); // .w != 0.0f for no ligth attenuation
+
 	glUseProgram(0);
 
 	glUseProgram(h_ShaderProgram_GOU);
@@ -672,6 +718,15 @@ void initialize_lights(void) { // follow OpenGL conventions for initialization
 	glUniform1f(ec_tog_light_GOU.spot_exponent, 0.0f); // [0.0, 128.0]
 	glUniform1f(ec_tog_light_GOU.spot_cutoff_angle, 30.0f); // [0.0, 90.0] or 180.0 (180.0 for no spot light effect)
 	glUniform4f(ec_tog_light_GOU.light_attenuation_factors, 1.0f, 0.0f, 0.0f, 0.0f); // .w != 0.0f for no ligth attenuation
+
+	glUniform1i(mc_tog_light_GOU.light_on, 1);
+	glUniform4f(mc_tog_light_GOU.ambient_color, 0.19125f, 0.0735f, 0.0225f, 1.0f);
+	glUniform4f(mc_tog_light_GOU.diffuse_color, 0.19125f, 0.0735f, 0.0225f, 1.0f);
+	glUniform4f(mc_tog_light_GOU.specular_color, 0.7038f, 0.27048f, 0.0828f, 1.0f);
+	glUniform3f(mc_tog_light_GOU.spot_direction, 0.0f, 0.0f, -1.0f);
+	glUniform1f(mc_tog_light_GOU.spot_exponent, 0.0f); // [0.0, 128.0]
+	glUniform1f(mc_tog_light_GOU.spot_cutoff_angle, 180.0f); // [0.0, 90.0] or 180.0 (180.0 for no spot light effmct)
+	glUniform4f(mc_tog_light_GOU.light_attenuation_factors, 0.0f, 0.005f, 0.0f, 1.0f); // .w != 0.0f for no ligth attenuation
 
 	glUseProgram(0);
 
@@ -737,6 +792,15 @@ void initialize_lights(void) { // follow OpenGL conventions for initialization
 	glUniform1f(ec_tog_light_PS.spot_cutoff_angle, 30.0f); // [0.0, 90.0] or 180.0 (180.0 for no spot light effect)
 	glUniform4f(ec_tog_light_PS.light_attenuation_factors, 1.0f, 0.0f, 0.0f, 0.0f); // .w != 0.0f for no ligth attenuation
 
+	glUniform1i(mc_tog_light_PS.light_on, 1);
+	glUniform4f(mc_tog_light_PS.ambient_color, 0.19125f, 0.0735f, 0.0225f, 1.0f);
+	glUniform4f(mc_tog_light_PS.diffuse_color, 0.19125f, 0.0735f, 0.0225f, 1.0f);
+	glUniform4f(mc_tog_light_PS.specular_color, 0.7038f, 0.27048f, 0.0828f, 1.0f);
+	glUniform3f(mc_tog_light_PS.spot_direction, 0.0f, 0.0f, -1.0f);
+	glUniform1f(mc_tog_light_PS.spot_exponent, 0.0f); // [0.0, 128.0]
+	glUniform1f(mc_tog_light_PS.spot_cutoff_angle, 180.0f); // [0.0, 90.0] or 180.0 (180.0 for no spot light effmct)
+	glUniform4f(mc_tog_light_PS.light_attenuation_factors, 0.0f, 0.005f, 0.0f, 1.0f); // .w != 0.0f for no ligth attenuation
+
 	glUseProgram(0);
 }
 
@@ -769,21 +833,25 @@ void initialize_flags(void) {
 	flag_fog = 0;
 	wc_tog_flag = 0;
 	ec_tog_flag = 0;
+	mc_tog_flag = 0;
 
 	glUseProgram(h_ShaderProgram_TXPS);
 	glUniform1i(loc_flag_fog, flag_fog);
 	glUniform1i(wc_tog_light_flag, wc_tog_flag);
 	glUniform1i(ec_tog_light_flag, ec_tog_flag);
+	glUniform1i(mc_tog_light_flag, mc_tog_flag);
 	glUseProgram(0);
 
 	glUseProgram(h_ShaderProgram_GOU);
 	glUniform1i(wc_tog_light_flag_GOU, wc_tog_flag);
 	glUniform1i(ec_tog_light_flag_GOU, ec_tog_flag);
+	glUniform1i(mc_tog_light_flag_GOU, mc_tog_flag);
 	glUseProgram(0);
 
 	glUseProgram(h_ShaderProgram_PS);
 	glUniform1i(wc_tog_light_flag_PS, wc_tog_flag);
 	glUniform1i(ec_tog_light_flag_PS, ec_tog_flag);
+	glUniform1i(mc_tog_light_flag_PS, mc_tog_flag);
 	glUseProgram(0);
 }
 
@@ -1675,7 +1743,6 @@ void draw_tiger(void) {
 	glDrawArrays(GL_TRIANGLES, tiger_vertex_offset[cur_frame_tiger], 3 * tiger_n_triangles[cur_frame_tiger]);
 	glBindVertexArray(0);
 	glUseProgram(0);
-	
 }
 
 int timestamp_scene_moving_object;
@@ -1909,12 +1976,24 @@ void draw_wolf(void) {
 	}
 	ModelViewProjectionMatrix = ProjectionMatrix * ModelViewMatrix;
 	
+
 	glUniformMatrix4fv(loc_ModelViewProjectionMatrix, 1, GL_FALSE, &ModelViewProjectionMatrix[0][0]);
 	glUniform3f(loc_primitive_color, 1.0f, 0.0f, 1.0f);
 
 	glBindVertexArray(wolf_VAO);
 	glDrawArrays(GL_TRIANGLES, wolf_vertex_offset[cur_frame_wolf], 3 * wolf_n_triangles[cur_frame_wolf]);
 	glBindVertexArray(0);
+	glUseProgram(0);
+
+	glm::vec4 tmp_pos = ModelViewMatrix * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	glUseProgram(h_ShaderProgram_TXPS);
+	glUniform4f(mc_tog_light.position, tmp_pos.x, tmp_pos.y, tmp_pos.z, tmp_pos.w);
+	glUseProgram(0);
+	glUseProgram(h_ShaderProgram_GOU);
+	glUniform4f(mc_tog_light_GOU.position, tmp_pos.x, tmp_pos.y, tmp_pos.z, tmp_pos.w);
+	glUseProgram(0);
+	glUseProgram(h_ShaderProgram_PS);
+	glUniform4f(mc_tog_light_PS.position, tmp_pos.x, tmp_pos.y, tmp_pos.z, tmp_pos.w);
 	glUseProgram(0);
 }
 
@@ -2150,6 +2229,22 @@ void keyboard(unsigned char key, int x, int y) {
 
 		glUseProgram(h_ShaderProgram_PS);
 		glUniform1i(ec_tog_light_flag_PS, ec_tog_flag);
+		glUseProgram(0);
+		glutPostRedisplay();
+		break;
+		//'m'키 대신
+	case'c':
+		mc_tog_flag = !mc_tog_flag;
+		glUseProgram(h_ShaderProgram_TXPS);
+		glUniform1i(mc_tog_light_flag, mc_tog_flag);
+		glUseProgram(0);
+
+		glUseProgram(h_ShaderProgram_GOU);
+		glUniform1i(mc_tog_light_flag_GOU, mc_tog_flag);
+		glUseProgram(0);
+
+		glUseProgram(h_ShaderProgram_PS);
+		glUniform1i(mc_tog_light_flag_PS, mc_tog_flag);
 		glUseProgram(0);
 		glutPostRedisplay();
 		break;
