@@ -2138,15 +2138,9 @@ void draw_my_objects_20161611()
 	draw_ironman();
 	draw_tank();
 	draw_wolf();
-	if (flag_blend_mode) {
-		glEnable(GL_BLEND);
-		glDisable(GL_DEPTH_TEST);
-	}
+
 	draw_cube();
-	if (flag_blend_mode) {
-		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
-	}
+
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 /*****************************  END: geometry setup *****************************/
@@ -2155,13 +2149,18 @@ void draw_my_objects_20161611()
 void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	reset_light();
-
+	if (flag_blend_mode) {
+		glEnable(GL_BLEND);
+	}
 	draw_my_objects_20161611();
 	draw_grid();
 	draw_axes();
 	draw_bistro_exterior();
 
 	glutSwapBuffers();
+	if (flag_blend_mode) {
+		glDisable(GL_BLEND);
+	}
 }
 
 #define CAM_TSPEED 30.0f
