@@ -1415,6 +1415,83 @@ void prepare_wolf(void) {
 	glBindVertexArray(0);
 }
 
+GLuint cube_VBO, cube_VAO;
+GLfloat cube_vertices[72][3] = { // vertices enumerated counterclockwise
+	{ -1.0f, -1.0f, -1.0f }, { -1.0f, 0.0f, 0.0f }, { -1.0f, -1.0f, 1.0f }, { -1.0f, 0.0f, 0.0f },
+	{ -1.0f, 1.0f, 1.0f }, { -1.0f, 0.0f, 0.0f },
+	{ 1.0f, 1.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { -1.0f, -1.0f, -1.0f }, { 0.0f, 0.0f, -1.0f },
+	{ -1.0f, 1.0f, -1.0f }, { 0.0f, 0.0f, -1.0f },
+	{ 1.0f, -1.0f, 1.0f }, { 0.0f, -1.0f, 0.0f }, { -1.0f, -1.0f, -1.0f }, { 0.0f, -1.0f, 0.0f },
+	{ 1.0f, -1.0f, -1.0f }, { 0.0f, -1.0f, 0.0f },
+	{ 1.0f, 1.0f, -1.0f }, { 0.0f, 0.0f, -1.0f }, { 1.0f, -1.0f, -1.0f }, { 0.0f, 0.0f, -1.0f },
+	{ -1.0f, -1.0f, -1.0f }, { 0.0f, 0.0f, -1.0f },
+	{ -1.0f, -1.0f, -1.0f }, { -1.0f, 0.0f, 0.0f }, { -1.0f, 1.0f, 1.0f }, { -1.0f, 0.0f, 0.0f },
+	{ -1.0f, 1.0f, -1.0f }, { -1.0f, 0.0f, 0.0f },
+	{ 1.0f, -1.0f, 1.0f }, { 0.0f, -1.0f, 0.0f }, { -1.0f, -1.0f, 1.0f }, { 0.0f, -1.0f, 0.0f },
+	{ -1.0f, -1.0f, -1.0f }, { 0.0f, -1.0f, 0.0f },
+	{ -1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { -1.0f, -1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f },
+	{ 1.0f, -1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f },
+	{ 1.0f, 1.0f, 1.0f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, -1.0f, -1.0f }, { 1.0f, 0.0f, 0.0f },
+	{ 1.0f, 1.0f, -1.0f }, { 1.0f, 0.0f, 0.0f },
+	{ 1.0f, -1.0f, -1.0f }, { 1.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 0.0f, 0.0f },
+	{ 1.0f, -1.0f, 1.0f }, { 1.0f, 0.0f, 0.0f },
+	{ 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f, -1.0f }, { 0.0f, 1.0f, 0.0f },
+	{ -1.0f, 1.0f, -1.0f }, { 0.0f, 1.0f, 0.0f },
+	{ 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f, 0.0f }, { -1.0f, 1.0f, -1.0f }, { 0.0f, 1.0f, 0.0f },
+	{ -1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f, 0.0f },
+	{ 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, { -1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f },
+	{ 1.0f, -1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }
+};
+
+Material_Parameters material_cube;
+float cube_alpha;
+float rotation_angle_cube = 0.0f;  // for cube rotation
+
+void prepare_cube(void) {
+	// Initialize vertex buffer object.
+	glGenBuffers(1, &cube_VBO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, cube_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), &cube_vertices[0][0], GL_STATIC_DRAW);
+
+	// Initialize vertex array object.
+	glGenVertexArrays(1, &cube_VAO);
+	glBindVertexArray(cube_VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, cube_VBO);
+	glVertexAttribPointer(INDEX_VERTEX_POSITION, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), BUFFER_OFFSET(0));
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(INDEX_NORMAL, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), BUFFER_OFFSET(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	material_cube.ambient_color[0] = 0.1745f;
+	material_cube.ambient_color[1] = 0.01175f;
+	material_cube.ambient_color[2] = 0.01175f;
+	material_cube.ambient_color[3] = 1.0f;
+
+	material_cube.diffuse_color[0] = 0.61424f;
+	material_cube.diffuse_color[1] = 0.04136f;
+	material_cube.diffuse_color[2] = 0.04136f;
+	material_cube.diffuse_color[3] = 1.0f;
+
+	material_cube.specular_color[0] = 0.727811f;
+	material_cube.specular_color[1] = 0.626959f;
+	material_cube.specular_color[2] = 0.626959f;
+	material_cube.specular_color[3] = 1.0f;
+
+	material_cube.specular_exponent = 76.8f;
+
+	material_cube.emissive_color[0] = 0.0f;
+	material_cube.emissive_color[1] = 0.0f;
+	material_cube.emissive_color[2] = 0.0f;
+	material_cube.emissive_color[3] = 1.0f;
+
+	cube_alpha = 0.5f;
+}
+
 void prepare_my_objects_20161611(void) {
 	prepare_tiger();
 	prepare_spider();
@@ -1424,10 +1501,10 @@ void prepare_my_objects_20161611(void) {
 	prepare_ironman();
 	prepare_tank();
 	prepare_wolf();
+	prepare_cube();
 }
 
 int timestamp_scene_tiger;
-;
 int tiger_eye_flag;
 int tiger_shake_head_flag;
 glm::mat4 ModelMatrix;
@@ -1997,6 +2074,45 @@ void draw_wolf(void) {
 	glUseProgram(0);
 }
 
+void draw_cube()
+{
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glUseProgram(h_ShaderProgram_PS);
+	glEnable(GL_CULL_FACE);
+
+	glUniform4fv(loc_material_PS.ambient_color, 1, material_cube.ambient_color);
+	glUniform4fv(loc_material_PS.diffuse_color, 1, material_cube.diffuse_color);
+	glUniform4fv(loc_material_PS.specular_color, 1, material_cube.specular_color);
+	glUniform1f(loc_material_PS.specular_exponent, material_cube.specular_exponent);
+	glUniform4fv(loc_material_PS.emissive_color, 1, material_cube.emissive_color);
+	//glUniform1f(loc_u_fragment_alpha, cube_alpha);
+
+	ModelViewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, -30.0f));
+	ModelViewMatrix = glm::scale(ModelViewMatrix, glm::vec3(4.0f, 4.0f, 4.0f));
+	ModelViewMatrix = glm::rotate(ModelViewMatrix, rotation_angle_cube, glm::vec3(1.0f, 1.0f, 1.0f));
+	ModelViewProjectionMatrix = ProjectionMatrix * ModelViewMatrix;
+	ModelViewMatrixInvTrans = glm::inverseTranspose(glm::mat3(ModelViewMatrix));
+	glUniformMatrix4fv(loc_ModelViewProjectionMatrix_PS, 1, GL_FALSE, &ModelViewProjectionMatrix[0][0]);
+	glUniformMatrix4fv(loc_ModelViewMatrix_PS, 1, GL_FALSE, &ModelViewMatrix[0][0]);
+	glUniformMatrix3fv(loc_ModelViewMatrixInvTrans_PS, 1, GL_FALSE, &ModelViewMatrixInvTrans[0][0]);
+
+	glCullFace(GL_FRONT);
+	glFrontFace(GL_CCW);
+	glBindVertexArray(cube_VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
+	glBindVertexArray(0);
+
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
+	glBindVertexArray(cube_VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
+	glBindVertexArray(0);
+
+	glDisable(GL_CULL_FACE);
+	glUseProgram(0);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+}
+
 void draw_my_objects_20161611()
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -2008,6 +2124,7 @@ void draw_my_objects_20161611()
 	draw_ironman();
 	draw_tank();
 	draw_wolf();
+	draw_cube();
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 /*****************************  END: geometry setup *****************************/
@@ -2284,6 +2401,7 @@ void timer_scene(int value) {
 	cur_frame_spider = timestamp_scene_moving_object % N_SPIDER_FRAMES;
 	cur_frame_wolf = timestamp_scene_moving_object % N_WOLF_FRAMES;
 	
+	rotation_angle_cube = (timestamp_scene_moving_object % 360) * TO_RADIAN;
 	timestamp_scene_moving_object = (timestamp_scene_moving_object + 1) % INT_MAX;
 	if (stop_flag == 0)
 		timestamp_scene_tiger = (timestamp_scene_tiger + 1) % INT_MAX;
