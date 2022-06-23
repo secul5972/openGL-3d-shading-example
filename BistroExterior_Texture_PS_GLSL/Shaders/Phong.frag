@@ -31,6 +31,9 @@ uniform bool u_ec_tog_light_flag;
 uniform LIGHT u_mc_tog_light;
 uniform bool u_mc_tog_light_flag;
 
+uniform int u_flag_blending = 0;
+uniform float u_fragment_alpha = 1.0f;
+
 const float zero_f = 0.0f;
 const float one_f = 1.0f;
 
@@ -252,5 +255,10 @@ vec4 lighting_equation(in vec3 P_EC, in vec3 N_EC) {
 }
 
 void main(void) {
-	final_color = lighting_equation(v_position_EC, normalize(v_normal_EC));
+	vec4 lighting_color = lighting_equation(v_position_EC, normalize(v_normal_EC));
+
+	if (u_flag_blending == 0)
+		final_color = vec4(lighting_color.rgb, 1.0f);
+	else
+		final_color = vec4(u_fragment_alpha*lighting_color.rgb, u_fragment_alpha);
 }

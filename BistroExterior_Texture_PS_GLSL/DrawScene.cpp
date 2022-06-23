@@ -41,6 +41,7 @@ GLint loc_flag_fog;
 GLint wc_tog_light_flag, wc_tog_light_flag_GOU, wc_tog_light_flag_PS;
 GLint ec_tog_light_flag, ec_tog_light_flag_GOU, ec_tog_light_flag_PS;
 GLint mc_tog_light_flag, mc_tog_light_flag_GOU, mc_tog_light_flag_PS;
+GLint loc_u_flag_blending, loc_u_fragment_alpha;
 
 float tog_light_pos[4][4] = {
 	{ -515.988586f, 106.687012f, 287.154633f, 1.0f},
@@ -441,6 +442,9 @@ void prepare_shader_program(void) {
 	wc_tog_light_flag_PS = glGetUniformLocation(h_ShaderProgram_PS, "u_wc_tog_light_flag");
 	ec_tog_light_flag_PS = glGetUniformLocation(h_ShaderProgram_PS, "u_ec_tog_light_flag");
 	mc_tog_light_flag_PS = glGetUniformLocation(h_ShaderProgram_PS, "u_mc_tog_light_flag");
+
+	loc_u_flag_blending = glGetUniformLocation(h_ShaderProgram_PS, "u_flag_blending");
+	loc_u_fragment_alpha = glGetUniformLocation(h_ShaderProgram_PS, "u_fragment_alpha");
 }
 /*******************************  END: shder setup ******************************/
 
@@ -2074,10 +2078,20 @@ void draw_wolf(void) {
 	glUseProgram(0);
 }
 
+int flag_blend_mode = 0; // for blending
+
 void draw_cube()
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glUseProgram(h_ShaderProgram_PS);
+
+	if (flag_blend_mode) {
+		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		glUniform1i(loc_u_flag_blending, 1); // Back_to_Front
+	}
+	else
+		glUniform1i(loc_u_flag_blending, 0);
+
 	glEnable(GL_CULL_FACE);
 
 	glUniform4fv(loc_material_PS.ambient_color, 1, material_cube.ambient_color);
@@ -2085,10 +2099,10 @@ void draw_cube()
 	glUniform4fv(loc_material_PS.specular_color, 1, material_cube.specular_color);
 	glUniform1f(loc_material_PS.specular_exponent, material_cube.specular_exponent);
 	glUniform4fv(loc_material_PS.emissive_color, 1, material_cube.emissive_color);
-	//glUniform1f(loc_u_fragment_alpha, cube_alpha);
+	glUniform1f(loc_u_fragment_alpha, cube_alpha);
 
-	ModelViewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.0f, -30.0f));
-	ModelViewMatrix = glm::scale(ModelViewMatrix, glm::vec3(4.0f, 4.0f, 4.0f));
+	ModelViewMatrix = glm::translate(ViewMatrix, glm::vec3(-1025.334106f, 496.938202f, 438.999054f));
+	ModelViewMatrix = glm::scale(ModelViewMatrix, glm::vec3(40.0f, 40.0f, 40.0f));
 	ModelViewMatrix = glm::rotate(ModelViewMatrix, rotation_angle_cube, glm::vec3(1.0f, 1.0f, 1.0f));
 	ModelViewProjectionMatrix = ProjectionMatrix * ModelViewMatrix;
 	ModelViewMatrixInvTrans = glm::inverseTranspose(glm::mat3(ModelViewMatrix));
@@ -2124,7 +2138,15 @@ void draw_my_objects_20161611()
 	draw_ironman();
 	draw_tank();
 	draw_wolf();
+	if (flag_blend_mode) {
+		glEnable(GL_BLEND);
+		glDisable(GL_DEPTH_TEST);
+	}
 	draw_cube();
+	if (flag_blend_mode) {
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+	}
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 /*****************************  END: geometry setup *****************************/
@@ -2133,6 +2155,7 @@ void draw_my_objects_20161611()
 void display(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	reset_light();
+
 	draw_my_objects_20161611();
 	draw_grid();
 	draw_axes();
@@ -2365,6 +2388,32 @@ void keyboard(unsigned char key, int x, int y) {
 		glUseProgram(0);
 		glutPostRedisplay();
 		break;
+	case 'j':
+		flag_blend_mode = 1 - flag_blend_mode;
+		if (flag_blend_mode) {
+			fprintf(stdout, "* Blend mode is on...\n");
+		}
+		else {
+			fprintf(stdout, "* Blend mode is off...\n");
+		}
+		glutPostRedisplay();
+		break;
+	case 'k':
+		if (flag_blend_mode) {
+			cube_alpha += 0.05f;
+			if (cube_alpha > 1.0f)
+				cube_alpha = 1.0f;
+			glutPostRedisplay();
+		}
+		break;
+	case 'l':
+		if (flag_blend_mode) {
+			cube_alpha -= 0.05f;
+			if (cube_alpha < 0.0f)
+				cube_alpha = 0.0f;
+			glutPostRedisplay();
+		}
+		break;
 	}
 }
 
@@ -2447,6 +2496,7 @@ void register_callbacks(void) {
 
 void initialize_OpenGL(void) {
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
